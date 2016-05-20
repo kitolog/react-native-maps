@@ -1,11 +1,14 @@
-var React = require('react-native');
+var React = require('react');
+var {
+    PropTypes,
+} = React;
+
+var ReactNative = require('react-native');
 var {
     View,
     NativeMethodsMixin,
     requireNativeComponent,
-    StyleSheet,
-    PropTypes,
-} = React;
+} = ReactNative;
 
 var MapUrlTile = React.createClass({
     mixins: [NativeMethodsMixin],

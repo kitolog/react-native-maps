@@ -32,6 +32,7 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     public static final int FIT_TO_ELEMENTS = 3;
 
     private final Map<String, Integer> MAP_TYPES = MapBuilder.of(
+            "none", GoogleMap.MAP_TYPE_NONE,
             "standard", GoogleMap.MAP_TYPE_NORMAL,
             "satellite", GoogleMap.MAP_TYPE_SATELLITE,
             "hybrid", GoogleMap.MAP_TYPE_HYBRID,
@@ -44,16 +45,19 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     private AirMapPolylineManager polylineManager;
     private AirMapPolygonManager polygonManager;
     private AirMapCircleManager circleManager;
+    private AirMapUrlTileManager tileManager;
 
     public AirMapManager(
             AirMapMarkerManager markerManager,
             AirMapPolylineManager polylineManager,
             AirMapPolygonManager polygonManager,
-            AirMapCircleManager circleManager) {
+            AirMapCircleManager circleManager,
+            AirMapUrlTileManager tileManager) {
         this.markerManager = markerManager;
         this.polylineManager = polylineManager;
         this.polygonManager = polygonManager;
         this.circleManager = circleManager;
+        this.tileManager = tileManager;
     }
 
     @Override

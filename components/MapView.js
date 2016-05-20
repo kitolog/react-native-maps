@@ -21,6 +21,7 @@ var MapPolyline = require('./MapPolyline');
 var MapPolygon = require('./MapPolygon');
 var MapCircle = require('./MapCircle');
 var MapCallout = require('./MapCallout');
+var MapUrlTile = require('./MapUrlTile');
 
 var MapView = React.createClass({
   mixins: [NativeMethodsMixin],
@@ -136,12 +137,14 @@ var MapView = React.createClass({
      * - satellite: satellite view
      * - hybrid: satellite view with roads and points of interest overlayed
      * - terrain: (Android only) topographic view
+     * - none: (Android only) no base map. Use when rendering your own tiles with <MapView.UrlTile />
      */
     mapType: PropTypes.oneOf([
       'standard',
       'satellite',
       'hybrid',
       'terrain',
+      'none'
     ]),
 
     /**
@@ -413,6 +416,7 @@ MapView.Polyline = MapPolyline;
 MapView.Polygon = MapPolygon;
 MapView.Circle = MapCircle;
 MapView.Callout = MapCallout;
+MapView.UrlTile = MapUrlTile;
 
 MapView.Animated = Animated.createAnimatedComponent(MapView);
 

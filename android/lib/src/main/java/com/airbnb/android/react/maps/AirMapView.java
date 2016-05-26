@@ -47,6 +47,8 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
     private boolean showUserLocation = false;
     private boolean isMonitoringRegion = false;
     private boolean isTouchDown = false;
+    private boolean handlePanDrag = false;
+
     private static final String[] PERMISSIONS = new String[] {
             "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
 
@@ -87,7 +89,7 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
                         view.startMonitoringRegion();
                         return true; // stop recording this gesture. let mapview handle it.
                     }
-                });
+        });
 
         gestureDetector =
                 new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
@@ -100,6 +102,9 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
                     @Override
                     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                                             float distanceY) {
+                        if (handlePanDrag) {
+                            onPanDrag(e2);
+                        }
                         view.startMonitoringRegion();
                         return false;
                     }
@@ -275,6 +280,10 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
             //noinspection MissingPermission
             map.setMyLocationEnabled(showUserLocation);
         }
+    }
+
+    public void setHandlePanDrag(boolean handlePanDrag) {
+        this.handlePanDrag = handlePanDrag;
     }
 
     public void addFeature(View child, int index) {
@@ -504,5 +513,12 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
         AirMapMarker markerView = markerMap.get(marker);
         event = makeClickEventData(marker.getPosition());
         manager.pushEvent(markerView, "onDragEnd", event);
+    }
+
+    public void onPanDrag(MotionEvent ev) {
+        Point point = new Point((int) ev.getX(), (int) ev.getY());
+        LatLng coords = this.map.getProjection().fromScreenLocation(point);
+        WritableMap event = makeClickEventData(coords);
+        manager.pushEvent(this, "onPanDrag", event);
     }
 }

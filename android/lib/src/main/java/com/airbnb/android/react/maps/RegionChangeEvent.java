@@ -11,12 +11,14 @@ public class RegionChangeEvent extends Event<RegionChangeEvent> {
     private final LatLngBounds bounds;
     private final LatLng center;
     private final boolean continuous;
+    private final boolean isTouchMove;
 
-    public RegionChangeEvent(int id, LatLngBounds bounds, LatLng center, boolean continuous) {
+    public RegionChangeEvent(int id, LatLngBounds bounds, LatLng center, boolean continuous, boolean isTouchMove) {
         super(id, System.currentTimeMillis());
         this.bounds = bounds;
         this.center = center;
         this.continuous = continuous;
+        this.isTouchMove = isTouchMove;
     }
 
     @Override
@@ -34,8 +36,10 @@ public class RegionChangeEvent extends Event<RegionChangeEvent> {
 
         WritableMap event = new WritableNativeMap();
         event.putBoolean("continuous", continuous);
+        event.putBoolean("isTouchMove", isTouchMove);
 
         WritableMap region = new WritableNativeMap();
+
         region.putDouble("latitude", center.latitude);
         region.putDouble("longitude", center.longitude);
         region.putDouble("latitudeDelta", bounds.northeast.latitude - bounds.southwest.latitude);

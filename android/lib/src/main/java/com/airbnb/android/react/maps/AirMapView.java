@@ -46,6 +46,7 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
     private LatLngBounds boundsToMove;
     private boolean showUserLocation = false;
     private boolean isMonitoringRegion = false;
+    private boolean isTouchMove = false;
     private boolean isTouchDown = false;
     private boolean handlePanDrag = false;
 
@@ -388,11 +389,13 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
     }
 
     public void animateToRegion(LatLngBounds bounds, int duration) {
+        isTouchMove = false;
         startMonitoringRegion();
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0), duration, null);
     }
 
     public void animateToCoordinate(LatLng coordinate, int duration) {
+        isTouchMove = false;
         startMonitoringRegion();
         map.animateCamera(CameraUpdateFactory.newLatLng(coordinate), duration, null);
     }
@@ -409,6 +412,7 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
         LatLngBounds bounds = builder.build();
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
         if (animated) {
+            isTouchMove = false;
             startMonitoringRegion();
             map.animateCamera(cu);
         } else {
@@ -442,6 +446,7 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
                 isTouchDown = true;
                 break;
             case (MotionEvent.ACTION_MOVE):
+                isTouchMove = true;
                 startMonitoringRegion();
                 break;
             case (MotionEvent.ACTION_UP):
@@ -478,7 +483,7 @@ public class AirMapView extends MapView implements GoogleMap.InfoWindowAdapter,
                     LatLngBoundsUtils.BoundsAreDifferent(bounds, lastBoundsEmitted)) {
                 LatLng center = map.getCameraPosition().target;
                 lastBoundsEmitted = bounds;
-                eventDispatcher.dispatchEvent(new RegionChangeEvent(getId(), bounds, center, true));
+                eventDispatcher.dispatchEvent(new RegionChangeEvent(getId(), bounds, center, true, isTouchMove));
             }
 
             timerHandler.postDelayed(this, 100);

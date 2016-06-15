@@ -1,6 +1,7 @@
 package com.airbnb.android.react.maps;
 
 import android.view.View;
+import android.app.Activity;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
@@ -41,6 +42,7 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
 
     private ReactContext reactContext;
 
+    private Activity reactActivity;
     private AirMapMarkerManager markerManager;
     private AirMapPolylineManager polylineManager;
     private AirMapPolygonManager polygonManager;
@@ -48,11 +50,13 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     private AirMapUrlTileManager tileManager;
 
     public AirMapManager(
+            Activity activity,
             AirMapMarkerManager markerManager,
             AirMapPolylineManager polylineManager,
             AirMapPolygonManager polygonManager,
             AirMapCircleManager circleManager,
             AirMapUrlTileManager tileManager) {
+        this.reactActivity = activity;
         this.markerManager = markerManager;
         this.polylineManager = polylineManager;
         this.polygonManager = polygonManager;
@@ -68,14 +72,14 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     @Override
     protected AirMapView createViewInstance(ThemedReactContext context) {
         reactContext = context;
-        AirMapView view = new AirMapView(context, this);
 
         try {
-            MapsInitializer.initialize(context.getApplicationContext());
+            MapsInitializer.initialize(reactActivity);
         } catch (Exception e) {
             e.printStackTrace();
             emitMapError("Map initialize error", "map_init_error");
         }
+        AirMapView view = new AirMapView(context, reactActivity, this);
 
         return view;
     }
@@ -262,7 +266,6 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     }
 
     public void pushEvent(View view, String name, WritableMap data) {
-        ReactContext reactContext = (ReactContext) view.getContext();
         reactContext.getJSModule(RCTEventEmitter.class)
                 .receiveEvent(view.getId(), name, data);
     }
